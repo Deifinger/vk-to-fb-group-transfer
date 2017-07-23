@@ -1,0 +1,11 @@
+# IDE
+.idea/
+
+# Composer
+composer.lock
+vendor/
+
+# Another
+/local.config.php
+
+
