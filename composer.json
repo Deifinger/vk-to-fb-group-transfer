@@ -1,0 +1,6 @@
+{
+    "require": {
+        "vladkens/vk": "^0.1.9",
+        "facebook/graph-sdk": "^5.6"
+    }
+}
