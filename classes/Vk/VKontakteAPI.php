@@ -17,39 +17,70 @@ class VKontakteAPI
     }
 
     /**
-     * Get wall posts
-     *
-     * @param string $groupId
-     * @param int $amount - if 0 returns all posts
+     * @param string $method
+     * @param array $parameters
+     * @param int $amount - if 0 gets all items
+     * @param int $maxCount - max count by request (api value)
      * @return array
      * @throws \Exception
      */
-    public function getWallPosts(string $groupId, int $amount = 0) : array
+    private function _getPageStaff(
+        string $method,
+        array $parameters,
+        int $amount = 0,
+        int $maxCount = 100 )
     {
-        $posts = array();
-        $vk_amount_posts = 100; // first value for right logic
-        $cur_amount_posts = 0;
+        $items = array();
+        // 100 - default value for right logic
+        $vkAmountItems = ($amount > 0 ? $amount : $maxCount);
+        $curAmountItems = 0;
         do
         {
-            $diff = min(100, $vk_amount_posts - $cur_amount_posts);
-            $res = $this->vk->getVK()->api('wall.get', array(
-                'owner_id'  => $groupId,
-                'offset'    => $cur_amount_posts,
-                'count'     => $diff // 100 - max posts by request
+            $diff = min($maxCount, $vkAmountItems - $curAmountItems);
+            $parameters = array_merge($parameters, array(
+                'offset'    => $curAmountItems,
+                'count'     => $diff
             ));
+            $res = $this->vk->getVK()->api($method, $parameters);
 
             if(isset($res['error']))
             {
                 throw new \Exception($res['error']['error_msg'], $res['error']['error_code']);
             }
 
-            $posts = array_merge($posts, $res['response']['items']);
-            $cur_amount_posts += $diff;
+            $items = array_merge($items, $res['response']['items']);
+            $curAmountItems += $diff;
 
-            $vk_amount_posts = ($amount > 0 ? $amount : $res['response']['count']);
+            $vkAmountItems = ($amount > 0 ? $amount : $res['response']['count']);
         }
-        while($vk_amount_posts > $cur_amount_posts);
+        while($vkAmountItems > $curAmountItems);
+
+        return $items;
+    }
+
+    /**
+     * Get wall posts
+     *
+     * @param string $pageId
+     * @param int $amount - if 0 returns all posts
+     * @return array
+     * @throws \Exception
+     */
+    public function getPagePosts(string $pageId, int $amount = 0) : array
+    {
+        $posts = $this->_getPageStaff('wall.get', array(
+            'owner_id'  => $pageId
+        ), $amount, 100);
 
         return $posts;
+    }
+
+    public function getPageVideos(string $pageId, int $amount = 0) : array
+    {
+        $videos = $this->_getPageStaff('video.get', array(
+            'owner_id'  => $pageId
+        ), $amount, 200);
+
+        return $videos;
     }
 }

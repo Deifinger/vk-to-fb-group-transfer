@@ -8,6 +8,7 @@ require 'vendor/autoload.php';
 
 $config['domain']       = 'http://localhost';
 $config['postsFile']    = 'vkPosts.json';
+$config['videosFile']   = 'vkVideos.json';
 $config['vk']           = array(
     'callback_url'      => $config['domain'] . '/getVKGroup.php',
     'app_id'            => '*****',
