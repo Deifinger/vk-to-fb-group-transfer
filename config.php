@@ -9,7 +9,7 @@ require 'vendor/autoload.php';
 $config['domain']       = 'http://localhost';
 $config['postsFile']    = 'vkPosts.json';
 $config['vk']           = array(
-    'callback_url'      => $config['domain'] . '/getVKGroupPosts.php',
+    'callback_url'      => $config['domain'] . '/getVKGroup.php',
     'app_id'            => '*****',
     'app_secret'        => '*****',
     'group_id'          => '-****',
@@ -17,7 +17,7 @@ $config['vk']           = array(
     'api_version'       => 5.67
 );
 $config['fb']           = array(
-    'callback_url'      => $config['domain'] . '/getVKGroupPosts.php',
+    'callback_url'      => $config['domain'] . '/setPostsToFB.php',
     'app_id'            => '*****',
     'app_secret'        => '*****',
     'group_id'          => '*****',
