@@ -1,28 +1,30 @@
 <?php
 /**
  * Created by Ruslan Kostikov
- * Date: 7/24/17 8:24 PM
+ * Date: 7/24/17 8:21 PM
  */
 
-namespace VKToFB;
+namespace VKToFB\Fb\Attachments;
 
 
-class AlbumAttachment extends Attachment
+class LinkAttachment extends Attachment
 {
     private $url;
+    private $photoUrl;
     private $caption;
 
     public function __construct($VKAttachment)
     {
         parent::__construct($VKAttachment);
 
-        $this->url = $this->_getPhotoUrl($VKAttachment);
-        $this->caption = $VKAttachment->album->title;
+        $this->photoUrl = $this->_getPhotoUrl($VKAttachment);
+        $this->url = $VKAttachment->link->url;
+        $this->caption = $VKAttachment->link->text;
     }
 
     private function _getPhotoUrl($VKAttachment)
     {
-        $photoObj = $VKAttachment->album->thumb;
+        $photoObj = $VKAttachment->link->photo;
         return $this->_getBiggestPhotoUrl($photoObj);
     }
 
@@ -33,5 +35,9 @@ class AlbumAttachment extends Attachment
     public function getCaption()
     {
         return $this->caption;
+    }
+    public function getPhotoUrl()
+    {
+        return $this->photoUrl;
     }
 }

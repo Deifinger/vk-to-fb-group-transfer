@@ -3,8 +3,9 @@
  * Created by Ruslan Kostikov
  * Date: 7/24/17 6:32 PM
  */
-namespace VKToFB;
+namespace VKToFB\Fb;
 
+use \VKToFB\Social;
 use \Facebook\Facebook as FB;
 
 /**
@@ -12,27 +13,15 @@ use \Facebook\Facebook as FB;
  *
  * Used $_SESSION['fb_access_token']
  */
-class Facebook
+class Facebook extends Social
 {
     private $fb = null;
-    private $scopes = [];
-    private $accessToken = null;
-    private $callbackUrl = '';
-    private $authUrl = '';
 
     function __construct(array $options)
     {
-        $defaults = [
-            'scopes'        => '',
-            'access_token'  => null,
-            'app_id'        => '',
-            'app_secret'    => '',
-            'default_graph_version' => '',
-            'callback_url'  => ''
-        ];
-        $options = array_merge($defaults, $options);
+        $options = array_merge($this->_defaults(), $options);
 
-        $options = $this->_initFB($options);
+        $options = $this->_init($options);
 
         $this->scopes = $options['scopes'];
         $this->accessToken = $options['access_token'];
@@ -40,7 +29,7 @@ class Facebook
 
     }
 
-    private function _initFB($options)
+    protected function _init($options)
     {
         // if we have access_token in session
         if(isset($_SESSION['fb_access_token']))
@@ -62,19 +51,18 @@ class Facebook
         return $options;
     }
 
-    private function _clearSession()
+    protected function _clearSession()
     {
         unset($_SESSION['fb_access_token']);
     }
 
-    private function _authUser()
+    protected function _authUser()
     {
         // login as user and back with code
-        header('Location: ' . $this->getAuthUrl());
+        header('Location: ' . $this->getLoginUrl());
         exit;
     }
 
-    // get login url
     public function getLoginUrl() : string
     {
         if(empty($this->authUrl))
@@ -86,21 +74,16 @@ class Facebook
         return $this->authUrl;
     }
 
-    public function getAccessToken() : string
+    public function getAccessToken()
     {
         return $this->accessToken;
     }
 
-    public function getAuthUrl() : string
-    {
-        return $this->authUrl;
-    }
-
-    public function getAccessTokenFromCode($code) : string
+    public function getAccessTokenFromCode($code = '') : string
     {
         if(!is_string($code) || empty($code))
         {
-            throw new Exception("Code is empty or incorrect");
+            throw new \Exception("Code is empty or incorrect");
         }
 
         // if we have a code, we are get access token from code
@@ -111,28 +94,6 @@ class Facebook
         $this->fb->setDefaultAccessToken($accessToken);
 
         return $accessToken;
-    }
-
-    public function updateAccessTokenIfNeed($code = '') : string
-    {
-        if($this->getAccessToken() == null)
-        {
-            // if have not code
-            if(empty($code))
-            {
-                $this->_authUser();
-            }
-
-            $this->getAccessTokenFromCode($code);
-        }
-
-        return $this->getAccessToken();
-    }
-
-    public function forceAuthUser()
-    {
-        $this->_clearSession();
-        $this->_authUser();
     }
 
     /**

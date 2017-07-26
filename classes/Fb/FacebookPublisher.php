@@ -4,7 +4,7 @@
  * Date: 7/24/17 10:47 PM
  */
 
-namespace VKToFB;
+namespace VKToFB\Fb;
 
 use \Facebook\Facebook;
 
@@ -49,8 +49,8 @@ class FacebookPublisher
     public function postVideo($pageId, $url, $caption, $description)
     {
         return $this->fb->post($pageId.'/videos', array(
-            'url'           => $url,
-            'caption'       => $caption,
+            'file_url'      => $url,
+            'title'         => $caption,
             'description'   => $description
         ));
     }

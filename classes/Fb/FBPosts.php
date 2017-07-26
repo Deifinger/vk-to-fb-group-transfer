@@ -4,7 +4,7 @@
  * Date: 7/24/17 7:24 PM
  */
 
-namespace VKToFB;
+namespace VKToFB\Fb;
 
 class FBPosts
 {

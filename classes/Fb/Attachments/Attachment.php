@@ -4,7 +4,7 @@
  * Date: 7/24/17 8:01 PM
  */
 
-namespace VKToFB;
+namespace VKToFB\Fb\Attachments;
 
 abstract class Attachment
 {

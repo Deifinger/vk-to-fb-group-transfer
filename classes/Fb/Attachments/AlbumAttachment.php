@@ -1,13 +1,13 @@
 <?php
 /**
  * Created by Ruslan Kostikov
- * Date: 7/24/17 8:05 PM
+ * Date: 7/24/17 8:24 PM
  */
 
-namespace VKToFB;
+namespace VKToFB\Fb\Attachments;
 
 
-class PhotoAttachment extends Attachment
+class AlbumAttachment extends Attachment
 {
     private $url;
     private $caption;
@@ -17,12 +17,12 @@ class PhotoAttachment extends Attachment
         parent::__construct($VKAttachment);
 
         $this->url = $this->_getPhotoUrl($VKAttachment);
-        $this->caption = $VKAttachment->photo->text;
+        $this->caption = $VKAttachment->album->title;
     }
 
     private function _getPhotoUrl($VKAttachment)
     {
-        $photoObj = $VKAttachment->photo;
+        $photoObj = $VKAttachment->album->thumb;
         return $this->_getBiggestPhotoUrl($photoObj);
     }
 

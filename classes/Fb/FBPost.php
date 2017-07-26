@@ -4,7 +4,9 @@
  * Date: 7/24/17 7:38 PM
  */
 
-namespace VKToFB;
+namespace VKToFB\Fb;
+
+use VKToFB\Fb\Attachments\AttachmentFactory;
 
 class FBPost
 {

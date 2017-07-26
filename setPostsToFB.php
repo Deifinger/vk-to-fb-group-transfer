@@ -4,14 +4,17 @@
  * Date: 7/23/17 8:18 PM
  */
 
-use \VKToFB\Facebook;
+use \VKToFB\Fb\Facebook;
+use \VKToFB\Fb\FacebookPublisher;
+use \VKToFB\Fb\FBPost;
+use \VKToFB\Vk\HelperVideo;
 
 require 'config.php';
 
-// is file writable?
-if (!is_readable($config['postsFile']))
+// is file readable?
+if (!is_readable($config['postsFile']) || !is_readable($config['videosFile']))
 {
-    throw new Exception('File ' . $config['postsFile'] . ' is not readable.', 403 );
+    die($config['postsFile'].' or '.$config['videosFile'].' files are not readable.' );
 }
 
 session_start();
@@ -39,8 +42,16 @@ fclose($ch);
 $posts = json_decode($posts);
 if(empty($posts))
 {
-    throw new \Exception('It\'s nothing to post');
+    die('It\'s nothing to post');
 }
+
+// get videos for uploading
+$ch = fopen($config['videosFile'], 'r');
+$videos = fread($ch, filesize($config['videosFile']));
+fclose($ch);
+
+$videos = json_decode($videos);
+//var_dump($videos);
 
 foreach ($posts as $ind => $post)
 {
@@ -53,8 +64,10 @@ foreach ($posts as $ind => $post)
 //print_r($posts[2]);
 //exit;
 
-$FBPublisher = new \VKToFB\FacebookPublisher($fb->getFB());
-$FBPost = new \VKToFB\FBPost($posts[4]);
+$FBPublisher = new FacebookPublisher($fb->getFB());
+$FBPost = new FBPost($posts[52]);
+$VideoHelper = new HelperVideo();
+$attachment = $FBPost->getAttachments()[0];
 
 try
 {
@@ -65,8 +78,8 @@ try
 
             $FBPublisher->postPhoto(
                 $config['fb']['group_id'],
-                $FBPost->getAttachments()[0]->getUrl(),
-                $FBPost->getAttachments()[0]->getCaption(),
+                $attachment->getUrl(),
+                $attachment->getCaption(),
                 $FBPost->getText()
             );
             break;
@@ -83,15 +96,32 @@ try
 
             $FBPublisher->postLink(
                 $config['fb']['group_id'],
-                $FBPost->getAttachments()[0]->getUrl(),
+                $attachment->getUrl(),
                 $FBPost->getText()
             );
             break;
 
         case 'video':
+
+            $video = $VideoHelper->findVideoById($videos, $attachment->getVKId());
+
+            if($video === false)
+            {
+                die('Video is empty');
+            }
+            /*var_dump($VideoHelper->getVideoUrl($video));
+            exit;
+*/
+            $FBPublisher->postVideo(
+                $config['fb']['group_id'],
+                $VideoHelper->getVideoUrl($video),
+                $attachment->getCaption(),
+                $attachment->getDesc()
+            );
             break;
+
         default:
-            throw new Exception('Unknown post type');
+            die('Unknown post type');
     }
 
 }
@@ -102,8 +132,9 @@ catch (\Facebook\Exceptions\FacebookAuthenticationException $ex)
 }
 catch (\Facebook\Exceptions\FacebookResponseException $ex)
 {
-    echo 'Error message: ' . $ex->getMessage();
-    $fb->forceAuthUser();
+    echo 'Error message: (#'.$ex->getCode().' - '.$ex->getSubErrorCode().') '.
+        $ex->getMessage();
+    //$fb->forceAuthUser();
 }
 catch (Exception $ex)
 {
