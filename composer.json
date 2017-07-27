@@ -1,9 +1,30 @@
 {
+    "minimum-stability" : "stable",
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "biganfa/vk-auth",
+                "version": "v0.0.1",
+                "source": {
+                    "url": "git@github.com:biganfa/vk-auth.git",
+                    "type": "git",
+                    "reference": "b0c57050419db3ff579637870fbeb159877cc593"
+                }
+            }
+        }
+    ],
     "require": {
         "vladkens/vk": "^0.1.9",
-        "facebook/graph-sdk": "^5.6"
+        "facebook/graph-sdk": "^5.6",
+        "guzzlehttp/guzzle": "^6.3",
+        "biganfa/vk-auth": "~0.0.1",
+        "monolog/monolog": "^1.23"
     },
     "autoload": {
-        "psr-4": { "VKToFB\\": "classes/" }
+        "psr-4": {
+            "VKToFB\\": "classes/",
+            "VkAuth\\": "vendor/biganfa/vk-auth/src/"
+        }
     }
 }

@@ -9,13 +9,16 @@ require 'vendor/autoload.php';
 $config['domain']       = 'http://localhost';
 $config['postsFile']    = 'vkPosts.json';
 $config['videosFile']   = 'vkVideos.json';
+$config['logFile']      = 'logs/log.log';
 $config['vk']           = array(
     'callback_url'      => $config['domain'] . '/getVKGroup.php',
     'app_id'            => '*****',
     'app_secret'        => '*****',
     'group_id'          => '-****',
     'access_token'      => null,
-    'api_version'       => 5.67
+    'api_version'       => 5.67,
+    'login'             => '*****',
+    'password'          => '*****'
 );
 $config['fb']           = array(
     'callback_url'      => $config['domain'] . '/setPostsToFB.php',
