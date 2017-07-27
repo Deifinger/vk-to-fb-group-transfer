@@ -15,7 +15,10 @@ class Logger
     private static $instance = null;
     private $logger = null;
 
-    private function __construct() { }
+    private function __construct()
+    {
+        $this->_init();
+    }
 
     private function _init()
     {
