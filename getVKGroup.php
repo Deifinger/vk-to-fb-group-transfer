@@ -5,9 +5,17 @@
  */
 
 use VKToFB\Vk\VKontakte;
-use \VKToFB\Vk\VKontakteAPI;
+use VKToFB\Vk\VKontakteAPI;
+use VKToFB\Vk\TestAPIForm\VKDevForm;
+use VKToFB\Config;
+use VKToFB\Logger;
 
 require 'config.php';
+
+$logger = Logger::getInstance();
+$logStream = new \Monolog\Handler\StreamHandler(Config::get('logFile'));
+$logger->addStreamHandler($logStream);
+
 
 // is file writable?
 if (!is_writable($config['postsFile']))
@@ -25,6 +33,7 @@ if(!isset($_GET['target']) || !in_array($_GET['target'], array('videos', 'posts'
 session_start();
 
 $target = $_GET['target'];
+$tag = isset($_GET['tag']) ? $_GET['tag'] : '';
 $vk = new VKontakte(array(
     'scopes'        => array('wall', 'video'),
     'access_token'  => $config['vk']['access_token'],
@@ -34,8 +43,6 @@ $vk = new VKontakte(array(
     'default_graph_version' => $config['vk']['api_version'],
     'callback_url'  => $config['vk']['callback_url'].'?target='.$target
 ));
-$vkAPI = new VKontakteAPI($vk);
-
 
 $code = isset($_REQUEST['code']) ? $_REQUEST['code'] : '';
 // if we have not access token
@@ -49,6 +56,7 @@ if($target == 'posts')
     $posts = array();
     try
     {
+        $vkAPI = new VKontakteAPI($vk);
         $posts = $vkAPI->getPagePosts($config['vk']['group_id']);
     }
     catch (Exception $ex)
@@ -71,7 +79,24 @@ elseif($target == 'videos')
     $videos = array();
     try
     {
-        $videos = $vkAPI->getPageVideos($config['vk']['group_id']);
+        if(empty($tag))
+        {
+            $vkAPI = new VKontakteAPI($vk);
+            $videos = $vkAPI->getPageVideos($config['vk']['group_id']);
+        }
+        elseif($tag == 'dev')
+        {
+            $devForm = new VKDevForm(
+                Config::get('vk.login'),
+                Config::get('vk.password'),
+                Config::get('vk.cookiePath'));//getDevHash
+
+            $videosResponse = $devForm->requestGetVideos(array(
+                'param_owner_id'    => Config::get('vk.group_id'),
+                'param_v'           => Config::get('vk.api_version')
+            ));
+            $videos = $videosResponse->items;
+        }
     }
     catch (Exception $ex)
     {

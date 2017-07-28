@@ -16,8 +16,18 @@ class Config
     {
         // TODO: rewrite config file for getting all config
         // TODO: immediately from file to variable
-        require "./../config.php";
-        $this->config = &$config;
+
+        $configPath = dirname(dirname(__FILE__)) . "/config.php";
+
+        if(file_exists($configPath))
+        {
+            require ($configPath);
+            $this->config = &$config;
+        }
+        else
+        {
+            $this->config = array();
+        }
     }
 
     public static function getInstance()
@@ -37,9 +47,9 @@ class Config
 
     public static function get(string $key)
     {
-        $config = self::getInstance();
+        $config = self::getInstance()->getConfig();
 
-        $keys = $key;
+        $keys = array($key);
         if(strpos($key, '.') !== false)
         {
             $keys = explode('.', $key);
@@ -49,13 +59,24 @@ class Config
         $buff = null;
         for($i = 0; $i < $count; $i++)
         {
+            // if buffer is null
             if($buff == null)
             {
-                $buff = &$config[$keys[$i]];
+                $ref = &$config; // get ref of config
             }
             else
             {
-                $buff = &$buff[$keys[$i]];
+                $ref = &$buff; // or get ref of buffer
+            }
+
+            // if it's last item
+            if($i === $count - 1)
+            {
+                $buff = $ref[$keys[$i]]; // get value
+            }
+            else
+            {
+                $buff = &$ref[$keys[$i]]; // if not get ref
             }
         }
 

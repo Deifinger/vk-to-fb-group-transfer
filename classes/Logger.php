@@ -13,16 +13,11 @@ use Monolog\Handler\StreamHandler;
 class Logger
 {
     private static $instance = null;
-    private $logger = null;
+    private static $logger = null;
 
     private function __construct()
     {
-        $this->_init();
-    }
-
-    private function _init()
-    {
-        $this->logger = new MonoLogger(__NAMESPACE__);
+        self::$logger = new MonoLogger(__NAMESPACE__);
     }
 
     public static function getInstance()
@@ -35,9 +30,14 @@ class Logger
         return self::$instance;
     }
 
+    public static function getLogger()
+    {
+        return self::$logger;
+    }
+
     public function addStreamHandler(StreamHandler $handler)
     {
-        $this->logger->pushHandler($handler);
+        self::$logger->pushHandler($handler);
     }
 
 }

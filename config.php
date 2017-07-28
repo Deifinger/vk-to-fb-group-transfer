@@ -4,6 +4,9 @@
  * Date: 7/23/17 11:42 PM
  */
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 require 'vendor/autoload.php';
 
 $config['domain']       = 'http://localhost';
@@ -11,6 +14,7 @@ $config['postsFile']    = 'vkPosts.json';
 $config['videosFile']   = 'vkVideos.json';
 $config['logFile']      = 'logs/log.log';
 $config['vk']           = array(
+    'cookiePath'        => realpath('vkDev.cookie'),
     'callback_url'      => $config['domain'] . '/getVKGroup.php',
     'app_id'            => '*****',
     'app_secret'        => '*****',
