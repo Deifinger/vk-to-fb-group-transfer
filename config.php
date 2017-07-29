@@ -12,6 +12,7 @@ require 'vendor/autoload.php';
 $config['domain']       = 'http://localhost';
 $config['postsFile']    = 'vkPosts.json';
 $config['videosFile']   = 'vkVideos.json';
+$config['albumsFile']   = 'vkAlbums.json';
 $config['logFile']      = 'logs/log.log';
 $config['vk']           = array(
     'cookiePath'        => realpath('vkDev.cookie'),
@@ -30,7 +31,9 @@ $config['fb']           = array(
     'app_secret'        => '*****',
     'group_id'          => '*****',
     'access_token'      => null,
-    'api_version'       => 'v2.10'
+    'api_version'       => 'v2.10',
+    'chronics_album_id' => '*****', // needs for uploading timeline photos
+    'default_album_name'=> 'Альбом '
 );
 
 if(file_exists('local.config.php'))

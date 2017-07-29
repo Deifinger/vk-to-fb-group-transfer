@@ -83,4 +83,38 @@ class VKontakteAPI
 
         return $videos;
     }
+
+    // TODO: make some elastic approach
+    public function getPageAlbums(string $ownerId, int $amount = 0) : array
+    {
+        $result = array();
+
+        $albums = $this->_getPageStaff('photos.getAlbums', array(
+            'owner_id'  => $ownerId
+        ), $amount, 200);
+
+        $count = sizeof($albums);
+        for ($i = 0; $i < $count; $i++)
+        {
+            $album = $albums[$i];
+
+            // TODO: use photos.getAll with offsets if albums very much
+            $photos = $this->_getPageStaff('photos.get', array(
+                'owner_id'  => $ownerId,
+                'album_id'  => $album['id']
+            ), $amount, 1000);
+            $albumRes = array(
+                'id'            => $album['id'],
+                'title'         => $album['title'],
+                'description'   => $album['description'],
+                'photos'        => $photos
+            );
+
+            $result[] = $albumRes;
+            // sleep on 0.4 sec, because it's very quickly for API
+            usleep ( 400000 );
+        }
+
+        return $result;
+    }
 }

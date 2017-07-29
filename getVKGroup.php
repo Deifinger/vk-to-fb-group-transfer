@@ -10,12 +10,7 @@ use VKToFB\Vk\TestAPIForm\VKDevForm;
 use VKToFB\Config;
 use VKToFB\Logger;
 
-require 'config.php';
-
-$logger = Logger::getInstance();
-$logStream = new \Monolog\Handler\StreamHandler(Config::get('logFile'));
-$logger->addStreamHandler($logStream);
-
+require 'init.php';
 
 // is file writable?
 if (!is_writable($config['postsFile']))
@@ -24,13 +19,11 @@ if (!is_writable($config['postsFile']))
     return;
 }
 
-if(!isset($_GET['target']) || !in_array($_GET['target'], array('videos', 'posts')))
+if(!isset($_GET['target']) || !in_array($_GET['target'], array('videos', 'posts', 'albums')))
 {
     echo 'Incorrect target.';
     return;
 }
-
-session_start();
 
 $target = $_GET['target'];
 $tag = isset($_GET['tag']) ? $_GET['tag'] : '';
@@ -51,66 +44,57 @@ $vk->updateAccessTokenIfNeed($code);
 $fileData = '';
 
 // TODO: write function for getting less code
-if($target == 'posts')
+try
 {
-    $posts = array();
-    try
+    if ($target == 'posts')
     {
+        $posts = array();
         $vkAPI = new VKontakteAPI($vk);
         $posts = $vkAPI->getPagePosts($config['vk']['group_id']);
-    }
-    catch (Exception $ex)
-    {
-        if($ex->getCode() == 5)
-        {
-            $vk->forceAuthUser();
-        }
-        else
-        {
-            echo $ex->getMessage();
-        }
-    }
 
-    $posts = array_reverse($posts);
-    $fileData = json_encode($posts);
-}
-elseif($target == 'videos')
-{
-    $videos = array();
-    try
+        $posts = array_reverse($posts);
+        $fileData = json_encode($posts);
+    }
+    elseif ($target == 'videos')
     {
-        if(empty($tag))
-        {
+        $videos = array();
+        if (empty($tag)) {
             $vkAPI = new VKontakteAPI($vk);
             $videos = $vkAPI->getPageVideos($config['vk']['group_id']);
-        }
-        elseif($tag == 'dev')
-        {
+        } elseif ($tag == 'dev') {
             $devForm = new VKDevForm(
                 Config::get('vk.login'),
                 Config::get('vk.password'),
                 Config::get('vk.cookiePath'));//getDevHash
 
             $videosResponse = $devForm->requestGetVideos(array(
-                'param_owner_id'    => Config::get('vk.group_id'),
-                'param_v'           => Config::get('vk.api_version')
+                'param_owner_id' => Config::get('vk.group_id'),
+                'param_v' => Config::get('vk.api_version')
             ));
             $videos = $videosResponse->items;
         }
+
+        $fileData = json_encode($videos);
     }
-    catch (Exception $ex)
+    elseif ($target == 'albums')
     {
-        if($ex->getCode() == 5)
-        {
-            $vk->forceAuthUser();
-        }
-        else
-        {
-            echo $ex->getMessage();
-        }
+        $vkAPI = new VKontakteAPI($vk);
+        $albums = $vkAPI->getPageAlbums($config['vk']['group_id']);
+
+        $fileData = json_encode($albums);
     }
 
-    $fileData = json_encode($videos);
+}
+catch (Exception $ex)
+{
+    if($ex->getCode() == 5)
+    {
+        $vk->forceAuthUser();
+    }
+    else
+    {
+        echo $ex->getMessage();
+    }
 }
 
 $ch = fopen($config[$target.'File'], 'w');

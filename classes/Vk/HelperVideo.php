@@ -29,23 +29,33 @@ class HelperVideo
         return current($video);
     }
 
-    public function getVideoUrl($video)
+    /**
+     * @param $video
+     * @return array|string
+     */
+    public function getVideoUrlInfo($video)
     {
-        $url = '';
+        $res = array(
+            'url'           => '',
+            'embeddable'    => false
+        );
 
         if(!isset($video->files))
         {
-            return $url;
+            return $res;
         }
 
-        $url = $this->_getMostQualityVideo($video->files);
+        $res['url'] = $this->_getMostQualityVideo($video->files);
 
         if(empty($url) && isset($video->files->external))
         {
-            $url = $video->files->external;
+            $res = array(
+                'url'           => $video->files->external,
+                'embeddable'    => true
+            );
         }
 
-        return $url;
+        return $res;
     }
 
     /**
