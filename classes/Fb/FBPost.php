@@ -11,6 +11,7 @@ use VKToFB\Fb\Attachments\AttachmentFactory;
 class FBPost
 {
     private $type; // by first attachment
+    private $id = 0; // in most for debugging
     private $text = '';
     private $attachments = array(); // \Attachments\Attachment
 
@@ -28,6 +29,7 @@ class FBPost
     {
         $this->type = 'text';
         $this->text = $VKPost->text;
+        $this->id = $VKPost->id;
 
         if(!isset($VKPost->attachments))
         {
@@ -49,6 +51,10 @@ class FBPost
         }
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
     public function getType()
     {
         return $this->type;

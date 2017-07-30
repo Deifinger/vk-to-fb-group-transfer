@@ -7,17 +7,23 @@
 namespace VKToFB\Fb\Attachments;
 
 
-class AlbumAttachment extends Attachment
+class AlbumAttachment extends Attachment implements \Countable, \IteratorAggregate
 {
+    private $id;
     private $url;
-    private $caption;
+    private $title;
+    private $desc;
+    private $count = 0;
+    private $photos = array();
 
     public function __construct($VKAttachment)
     {
         parent::__construct($VKAttachment);
 
+        $this->id = $VKAttachment->album->id;
         $this->url = $this->_getPhotoUrl($VKAttachment);
-        $this->caption = $VKAttachment->album->title;
+        $this->title = $VKAttachment->album->title;
+        $this->desc = $VKAttachment->album->description;
     }
 
     private function _getPhotoUrl($VKAttachment)
@@ -26,12 +32,60 @@ class AlbumAttachment extends Attachment
         return $this->_getBiggestPhotoUrl($photoObj);
     }
 
+    public function count()
+    {
+        return $this->count;
+    }
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->photos);
+    }
+
+    public function addPhoto(PhotoAttachment $photo)
+    {
+        for ($i = 0; $i < $this->count; $i++)
+        {
+            if($this->photos[$i]->getId() === $photo->getId())
+            {
+                return false;
+            }
+        }
+        $this->photos[] = $photo;
+        ++$this->count;
+        return false;
+    }
+    public function removePhoto(PhotoAttachment $photo)
+    {
+        for ($i = 0; $i < $this->count; $i++)
+        {
+            if($this->photos[$i]->getId() === $photo->getId())
+            {
+                unset($this->photos[$i]);
+                return true;
+            }
+        }
+        --$this->count;
+        return false;
+    }
+
+    public function getVKId()
+    {
+        return $this->id;
+    }
     public function getUrl()
     {
         return $this->url;
     }
+    public function getTitle()
+    {
+        return $this->title;
+    }
     public function getCaption()
     {
-        return $this->caption;
+        return $this->desc;
+    }
+    public function getPhotos()
+    {
+        return $this->photos;
     }
 }

@@ -9,6 +9,7 @@ namespace VKToFB\Fb\Attachments;
 
 class PhotoAttachment extends Attachment
 {
+    private $id;
     private $url;
     private $caption;
 
@@ -16,16 +17,20 @@ class PhotoAttachment extends Attachment
     {
         parent::__construct($VKAttachment);
 
+        $this->id = $VKAttachment->id;
         $this->url = $this->_getPhotoUrl($VKAttachment);
-        $this->caption = $VKAttachment->photo->text;
+        $this->caption = isset($VKAttachment->text) ? $VKAttachment->text : '';
     }
 
     private function _getPhotoUrl($VKAttachment)
     {
-        $photoObj = $VKAttachment->photo;
-        return $this->_getBiggestPhotoUrl($photoObj);
+        return $this->_getBiggestPhotoUrl($VKAttachment);
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
     public function getUrl()
     {
         return $this->url;

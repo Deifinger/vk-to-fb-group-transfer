@@ -19,7 +19,7 @@ class LinkAttachment extends Attachment
 
         $this->photoUrl = $this->_getPhotoUrl($VKAttachment);
         $this->url = $VKAttachment->link->url;
-        $this->caption = $VKAttachment->link->text;
+        $this->caption = $VKAttachment->link->title;
     }
 
     private function _getPhotoUrl($VKAttachment)

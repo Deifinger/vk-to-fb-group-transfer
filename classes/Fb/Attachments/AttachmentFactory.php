@@ -19,7 +19,7 @@ class AttachmentFactory extends AttachmentFactoryAbstract
         switch($VKAttachment->type)
         {
             case "photo":
-                $attachment = new PhotoAttachment($VKAttachment);
+                $attachment = new PhotoAttachment($VKAttachment->photo);
                 break;
             case "album":
                 $attachment = new AlbumAttachment($VKAttachment);
