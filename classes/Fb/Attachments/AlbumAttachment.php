@@ -9,7 +9,7 @@ namespace VKToFB\Fb\Attachments;
 
 class AlbumAttachment extends Attachment implements \Countable, \IteratorAggregate
 {
-    private $id;
+    private $VKId;
     private $url;
     private $title;
     private $desc;
@@ -20,7 +20,7 @@ class AlbumAttachment extends Attachment implements \Countable, \IteratorAggrega
     {
         parent::__construct($VKAttachment);
 
-        $this->id = $VKAttachment->album->id;
+        $this->VKId = $VKAttachment->album->id;
         $this->url = $this->_getPhotoUrl($VKAttachment);
         $this->title = $VKAttachment->album->title;
         $this->desc = $VKAttachment->album->description;
@@ -45,7 +45,7 @@ class AlbumAttachment extends Attachment implements \Countable, \IteratorAggrega
     {
         for ($i = 0; $i < $this->count; $i++)
         {
-            if($this->photos[$i]->getId() === $photo->getId())
+            if($this->photos[$i]->getVKId() === $photo->getVKId())
             {
                 return false;
             }
@@ -58,7 +58,7 @@ class AlbumAttachment extends Attachment implements \Countable, \IteratorAggrega
     {
         for ($i = 0; $i < $this->count; $i++)
         {
-            if($this->photos[$i]->getId() === $photo->getId())
+            if($this->photos[$i]->getId() === $photo->getVKId())
             {
                 unset($this->photos[$i]);
                 return true;
@@ -70,7 +70,7 @@ class AlbumAttachment extends Attachment implements \Countable, \IteratorAggrega
 
     public function getVKId()
     {
-        return $this->id;
+        return $this->VKId;
     }
     public function getUrl()
     {

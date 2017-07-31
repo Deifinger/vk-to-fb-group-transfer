@@ -23,7 +23,10 @@ $config['vk']           = array(
     'access_token'      => null,
     'api_version'       => 5.67,
     'login'             => '*****',
-    'password'          => '*****'
+    'password'          => '*****',
+    // TODO: get screen_name by request to api
+    /* @see https://vk.com/dev/groups.getById */
+    'screen_name'       => 'group_screen_name' // used for not accessible shared posts
 );
 $config['fb']           = array(
     'callback_url'      => $config['domain'] . '/setPostsToFB.php',
@@ -33,7 +36,7 @@ $config['fb']           = array(
     'access_token'      => null,
     'api_version'       => 'v2.10',
     'chronics_album_id' => '*****', // needs for uploading timeline photos
-    'default_album_name'=> 'Альбом '
+    'default_album_name'=> 'Album '
 );
 
 if(file_exists('local.config.php'))

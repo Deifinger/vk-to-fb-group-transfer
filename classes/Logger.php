@@ -18,6 +18,7 @@ class Logger
     private function __construct()
     {
         self::$logger = new MonoLogger(__NAMESPACE__);
+
     }
 
     public static function getInstance()

@@ -18,8 +18,18 @@ class AttachmentFactory extends AttachmentFactoryAbstract
         $attachment = null;
         switch($VKAttachment->type)
         {
+            // TODO: call type property as photo in every attachment
             case "photo":
-                $attachment = new PhotoAttachment($VKAttachment->photo);
+                // TODO: remove ad hoc case
+                if(isset($VKAttachment->albumAdHoc))
+                {
+                    $item = $VKAttachment;
+                }
+                else
+                {
+                    $item = $VKAttachment->photo;
+                }
+                $attachment = new PhotoAttachment($item);
                 break;
             case "album":
                 $attachment = new AlbumAttachment($VKAttachment);

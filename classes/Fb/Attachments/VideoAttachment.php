@@ -23,10 +23,6 @@ class VideoAttachment extends Attachment
         $this->desc = $VKAttachment->video->description;
     }
 
-    private function _getVideoUrl()
-    {
-    }
-
     public function getUrl()
     {
         return $this->url;

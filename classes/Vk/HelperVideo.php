@@ -47,7 +47,7 @@ class HelperVideo
 
         $res['url'] = $this->_getMostQualityVideo($video->files);
 
-        if(empty($url) && isset($video->files->external))
+        if(empty($res['url']) && isset($video->files->external))
         {
             $res = array(
                 'url'           => $video->files->external,

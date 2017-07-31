@@ -14,5 +14,6 @@ session_start();
 
 $logger = Logger::getInstance();
 $logStream = new \Monolog\Handler\StreamHandler(Config::get('logFile'));
+$logStream->pushProcessor(new Monolog\Processor\PsrLogMessageProcessor);
 $logger->addStreamHandler($logStream);
 

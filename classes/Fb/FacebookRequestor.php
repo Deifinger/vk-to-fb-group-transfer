@@ -77,13 +77,12 @@ class FacebookRequestor
         ));
     }
 
-    public function postVideo($pageId, $url, $caption, $description, bool $isEmbeddable = false)
+    public function postVideo($pageId, $url, $caption, $description)
     {
         return $this->fb->post($pageId.'/videos', array(
             'file_url'      => $url,
             'title'         => $caption,
-            'description'   => $description,
-            'embeddable'    => $isEmbeddable
+            'description'   => $description
         ));
     }
 
